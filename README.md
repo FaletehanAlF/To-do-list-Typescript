@@ -32,7 +32,7 @@ Aplikasi To-Do List modern berbasis **TypeScript** dan **Vite** yang membantu pe
 ### 1. Clone Repository
 
 ```bash
-git clone https://github.com/FaletehanAlF/To-do-list.git
+git clone https://github.com/FaletehanAlF/To-do-list-Typescript.git
 ```
 
 ### 2. Masuk ke Folder Project
