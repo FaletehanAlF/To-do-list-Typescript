@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow — To-Do App</title>
+  <meta name="description" content="A clean, fast personal task manager." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./src/style.css" />
+</head>
+<body>
+
+  <!-- ── Toast notification ─────────────────────── -->
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <!-- ── Confirm dialog ─────────────────────────── -->
+  <div id="confirmOverlay" class="confirm-overlay hidden">
+    <div class="confirm-box">
+      <p id="confirmMessage" class="confirm-msg"></p>
+      <div class="confirm-actions">
+        <button id="confirmCancel" class="btn btn--ghost">Cancel</button>
+        <button id="confirmOk"     class="btn btn--danger">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── App shell ───────────────────────────────── -->
+  <div class="app">
+
+    <!-- LOGIN SCREEN -->
+    <section class="screen" id="loginScreen">
+      <div class="login-card">
+        <div class="login-logo">
+          <svg width="36" height="36" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <rect width="36" height="36" rx="10" fill="#2563EB"/>
+            <path d="M10 13h16M10 18h10M10 23h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="login-brand">TaskFlow</span>
+        </div>
+        <h1 class="login-title">Welcome back</h1>
+        <p class="login-sub">Enter your username to continue — no password needed.</p>
+        <div class="login-form">
+          <input
+            id="usernameInput"
+            class="input"
+            type="text"
+            placeholder="e.g. john, alex, sarah…"
+            maxlength="32"
+            autocomplete="username"
+            spellcheck="false"
+          />
+          <button id="loginBtn" class="btn btn--primary btn--full">Continue →</button>
+        </div>
+        <p class="login-hint">Your tasks are saved privately per username.</p>
+      </div>
+    </section>
+
+    <!-- MAIN APP SCREEN -->
+    <section class="screen hidden" id="appScreen">
+
+      <!-- Header -->
+      <header class="header">
+        <div class="header-left">
+          <svg width="28" height="28" viewBox="0 0 36 36" fill="none" aria-hidden="true">
+            <rect width="36" height="36" rx="10" fill="#2563EB"/>
+            <path d="M10 13h16M10 18h10M10 23h13" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+          <span class="header-brand">TaskFlow</span>
+        </div>
+        <div class="header-right">
+          <span class="header-user">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+            <span id="headerUsername"></span>
+          </span>
+          <button id="logoutBtn" class="btn btn--ghost btn--sm" title="Switch user">
+            Switch user
+          </button>
+        </div>
+      </header>
+
+      <!-- Main content -->
+      <main class="main">
+
+        <!-- Stats bar -->
+        <div class="stats-bar">
+          <div class="stat">
+            <span id="statTotal" class="stat-num">0</span>
+            <span class="stat-label">Total</span>
+          </div>
+          <div class="stat">
+            <span id="statActive" class="stat-num">0</span>
+            <span class="stat-label">Active</span>
+          </div>
+          <div class="stat">
+            <span id="statDone" class="stat-num">0</span>
+            <span class="stat-label">Done</span>
+          </div>
+        </div>
+
+        <!-- Add task input -->
+        <div class="add-bar">
+          <input
+            id="taskInput"
+            class="input"
+            type="text"
+            placeholder="Add a new task…"
+            maxlength="200"
+            autocomplete="off"
+          />
+          <button id="addBtn" class="btn btn--primary">Add task</button>
+        </div>
+
+        <!-- Toolbar: filter + bulk actions -->
+        <div class="toolbar">
+          <!-- Filter tabs -->
+          <div class="filter-tabs" role="tablist" aria-label="Filter tasks">
+            <button class="filter-tab active" data-filter="all"       role="tab" aria-selected="true">All</button>
+            <button class="filter-tab"         data-filter="active"   role="tab" aria-selected="false">Active</button>
+            <button class="filter-tab"         data-filter="completed" role="tab" aria-selected="false">Done</button>
+          </div>
+
+          <!-- Bulk actions (shown when ≥1 checkbox is checked) -->
+          <div class="bulk-actions" id="bulkActions">
+            <span id="selectedCount" class="selected-count"></span>
+            <button id="deleteSelectedBtn" class="btn btn--danger btn--sm">Delete selected</button>
+          </div>
+
+          <!-- Clear all -->
+          <button id="clearAllBtn" class="btn btn--ghost btn--sm">Clear all</button>
+        </div>
+
+        <!-- Task list -->
+        <ul class="task-list" id="taskList" aria-label="Task list">
+          <!-- Tasks injected by JS -->
+        </ul>
+
+        <!-- Empty state -->
+        <div class="empty-state hidden" id="emptyState">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="8" y="6" width="32" height="36" rx="4" stroke="#CBD5E1" stroke-width="2"/>
+            <path d="M16 18h16M16 24h10M16 30h12" stroke="#CBD5E1" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p id="emptyText">No tasks yet — add one above.</p>
+        </div>
+
+      </main>
+    </section>
+
+  </div><!-- /app -->
+
+  <script type="module" src="./src/main.ts"></script>
+</body>
+</html>
